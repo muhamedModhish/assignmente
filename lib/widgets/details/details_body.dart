@@ -104,38 +104,29 @@ class DetailsBody extends StatelessWidget {
           Center(
             child: ElevatedButton.icon(
               onPressed: () {
-                Provider.of<CartProvider>(
-                  context,
-                  listen: false,
-                ).toggleFavorite(product);
+                final cart = Provider.of<CartProvider>(context, listen: false);
+                cart.toggleFavorite(product);
+
+                final isFav = cart.isFavorite(product);
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("تمت الإضافة للمفضلة ❤️")),
+                  SnackBar(
+                    content: Text(
+                      isFav
+                          ? "تمت الإضافة للمفضلة ❤️"
+                          : "تمت الإزالة من المفضلة ❌",
+                    ),
+                  ),
                 );
               },
               icon: Icon(Icons.favorite),
-              label: Text("إضافة للمفضلة"),
+              label: Text("المفضلة"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               ),
             ),
           ),
-          // SizedBox(height: 20),
-
-          // Center(
-          //   child: ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.pop(context, "تم اختيار المنتج");
-          //     },
-          //     style: ElevatedButton.styleFrom(
-          //       padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-          //     ),
-          //     child: Text("تأكيد والرجوع"),
-          //   ),
-          // ),
-
-          // SizedBox(height: 20),
         ],
       ),
     );

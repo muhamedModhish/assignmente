@@ -1,10 +1,12 @@
 import 'package:electronic_stor/cart_provider.dart';
 import 'package:electronic_stor/cart_screen.dart';
 import 'package:electronic_stor/constansts.dart';
+import 'package:electronic_stor/favorites_screen.dart' show FavoritesScreen;
 import 'package:electronic_stor/widgets/home/home_body.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:electronic_stor/screens/favorites_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -21,6 +23,15 @@ class HomeScreen extends StatelessWidget {
       title: Text("مرحبا بكم بمتجر الكترونيات"),
       centerTitle: false,
       actions: [
+        IconButton(
+          icon: Icon(Icons.favorite),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => FavoritesScreen()),
+            );
+          },
+        ),
         Consumer<CartProvider>(
           builder: (context, cart, child) {
             return Stack(
@@ -34,6 +45,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                 ),
+
                 if (cart.count > 0)
                   Positioned(
                     right: 6,
