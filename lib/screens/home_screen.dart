@@ -4,9 +4,7 @@ import 'package:electronic_stor/constansts.dart';
 import 'package:electronic_stor/favorites_screen.dart' show FavoritesScreen;
 import 'package:electronic_stor/widgets/home/home_body.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:electronic_stor/screens/favorites_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override

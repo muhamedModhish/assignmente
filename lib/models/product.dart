@@ -1,67 +1,40 @@
 class Product {
-  final int id, price;
-  final String title, subTitle, description, image;
+  final int id;
+  final double price;
+  final String title, description, image;
+  final String category;
+  final double rating;
 
   Product({
     required this.id,
     required this.price,
     required this.title,
-    required this.subTitle,
     required this.description,
     required this.image,
+    this.category = '',
+    this.rating = 0.0,
   });
+
+  // تحويل بيانات JSON إلى كائن Product
+  factory Product.fromJson(Map<String, dynamic> json) {
+    // معالجة التقييم بشكل مرن لتفادي استثناءات اختلاف الهيكل بين APIs
+    double parsedRating = 0.0;
+    if (json['rating'] != null) {
+      if (json['rating'] is num) {
+        parsedRating = (json['rating'] as num).toDouble();
+      } else if (json['rating'] is Map && json['rating']['rate'] != null) {
+        parsedRating = (json['rating']['rate'] as num).toDouble();
+      }
+    }
+
+    return Product(
+      id: json['id'] ?? 0,
+      price: (json['price'] ?? 0).toDouble(),
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      image: json['image'] ?? json['thumbnail'] ?? '',
+      category: json['category'] ?? '',
+      rating: parsedRating,
+    );
+  }
 }
-
-List<Product> products = [
-  Product(
-    id: 1,
-    price: 1099,
-    title: "جهاز موبايل",
-    subTitle: "خفيف الوزن وقوي",
-    description: " خفيف الوزن مع عمر بطارية طويل وأداء سريع.",
-    image: "images/phone.jpg",
-  ),
-
-  Product(
-    id: 2,
-    price: 500,
-    title: "سماعات",
-    subTitle: "إلغاء الضوضاء",
-    description: "سماعات إلغاء الضوضاء مع جودة صوت ممتازة وراحة.",
-    image: "images/hedest.jpg",
-  ),
-  Product(
-    id: 3,
-    price: 62,
-    title: "مسجل صوت",
-    subTitle: "سجل اللحظات المهمة حولك",
-    description: "مسجل صوت عالي الجودة لتسجيل اللحظات المهمة حولك.",
-    image: "images/speker.jpg",
-  ),
-  Product(
-    id: 4,
-    price: 299,
-    title: "كاميرا",
-    subTitle: "التقاط اللحظات الثمينة",
-    description: "كاميرا عالية الجودة لالتقاط اللحظات الثمينة في حياتك.",
-    image: "images/camera.jpg",
-  ),
-  Product(
-    id: 5,
-    price: 199,
-    title: "كاميرا كمبيوتر",
-    subTitle: " واضح ومريح",
-    description:
-        "كاميرا كمبيوتر عالي الأداء لالتقاط الصور والفيديو بجودة عالية.",
-    image: "images/cameracom.jpg",
-  ),
-  Product(
-    id: 6,
-    price: 89,
-    title: "سماعات ثلاثية الأبعاد",
-    subTitle: "صوت واضح ومريح",
-    description:
-        "سماعات ثلاثية الأبعاد عالية الجودة لتجربة صوت واضحة ومريحة أثناء الاستماع إلى الموسيقى أو المكالمات.",
-    image: "images/hedest3.jpg",
-  ),
-];

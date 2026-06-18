@@ -13,7 +13,6 @@ class ProductImage extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: kDefaultPadding),
       height: size.width * 0.8,
-      // color: Colors.black12,
       child: Stack(
         alignment: AlignmentGeometry.bottomCenter,
         children: [
@@ -25,11 +24,32 @@ class ProductImage extends StatelessWidget {
               shape: BoxShape.circle,
             ),
           ),
-          Image.asset(image,
-          // s/hedest.jpg,
+          // استخدام Image.network بدلاً من Image.asset
+          Image.network(
+            image,
             height: size.width * 0.75,
             width: size.width * 0.75,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Icon(
+                  Icons.image_not_supported,
+                  size: 80,
+                  color: Colors.grey,
+                ),
+              );
+            },
           ),
         ],
       ),

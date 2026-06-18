@@ -4,7 +4,6 @@ import 'package:electronic_stor/models/product.dart';
 import 'package:electronic_stor/widgets/details/color_dot.dart';
 import 'package:electronic_stor/widgets/details/product_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 class DetailsBody extends StatelessWidget {
@@ -21,7 +20,6 @@ class DetailsBody extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5),
-            // height: 300,
             decoration: BoxDecoration(
               color: kBackgroundColor,
               borderRadius: BorderRadius.only(
@@ -54,11 +52,51 @@ class DetailsBody extends StatelessWidget {
                   ),
                   child: Text(
                     product.title,
-                    style: Theme.of(context).textTheme.headlineLarge,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                // عرض الفئة
+                if (product.category.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: kPrimaryColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        product.category,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: kPrimaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                // عرض التقييم
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber, size: 22),
+                    SizedBox(width: 4),
+                    Text(
+                      product.rating.toStringAsFixed(1),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
                 Text(
-                  "السعر : \$${product.price},",
+                  "السعر : \$${product.price.toStringAsFixed(2)},",
                   style: TextStyle(
                     fontSize: 28.0,
                     fontWeight: FontWeight.w600,
@@ -127,6 +165,7 @@ class DetailsBody extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 20),
         ],
       ),
     );

@@ -27,9 +27,22 @@ class CartScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = cart.items[index];
                       return ListTile(
-                        leading: Image.asset(item.image),
-                        title: Text(item.title),
-                        subtitle: Text("${item.price} \$"),
+                        // استخدام Image.network بدلاً من Image.asset
+                        leading: Image.network(
+                          item.image,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(Icons.image_not_supported, size: 50);
+                          },
+                        ),
+                        title: Text(
+                          item.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text("${item.price.toStringAsFixed(2)} \$"),
                         trailing: IconButton(
                           icon: Icon(Icons.remove_circle),
                           onPressed: () => cart.remove(item),
@@ -41,7 +54,7 @@ class CartScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(
-                    "الإجمالي: ${cart.totalPrice} \$",
+                    "الإجمالي: ${cart.totalPrice.toStringAsFixed(2)} \$",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

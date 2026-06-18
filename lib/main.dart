@@ -1,4 +1,5 @@
 import 'package:electronic_stor/constansts.dart';
+import 'package:electronic_stor/product_provider.dart';
 import 'package:electronic_stor/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,8 +9,13 @@ import 'cart_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => CartProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(
+          create: (_) => ProductProvider()..loadProducts(),
+        ),
+      ],
       child: MyApp(),
     ),
   );

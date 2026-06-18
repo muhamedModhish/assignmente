@@ -14,7 +14,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   void remove(Product product) {
-    _items.remove(product);
+    _items.removeWhere((item) => item.id == product.id);
     notifyListeners();
   }
 
@@ -30,8 +30,9 @@ class CartProvider extends ChangeNotifier {
 
   // ⭐ المفضلة
   void toggleFavorite(Product product) {
-    if (_favorites.contains(product)) {
-      _favorites.remove(product);
+    // المقارنة بالـ id بدلاً من المرجع
+    if (isFavorite(product)) {
+      _favorites.removeWhere((item) => item.id == product.id);
     } else {
       _favorites.add(product);
     }
@@ -39,6 +40,6 @@ class CartProvider extends ChangeNotifier {
   }
 
   bool isFavorite(Product product) {
-    return _favorites.contains(product);
+    return _favorites.any((item) => item.id == product.id);
   }
 }

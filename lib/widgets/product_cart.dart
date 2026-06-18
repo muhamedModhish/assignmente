@@ -23,7 +23,6 @@ class ProductCard extends StatelessWidget {
         vertical: kDefaultPadding / 2,
       ),
       height: 190.0,
-      // color: Colors.red,
       child: InkWell(
         onTap: () => press(),
         child: Stack(
@@ -50,7 +49,33 @@ class ProductCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
                 height: 160.0,
                 width: 200.0,
-                child: Image.asset(product.image, fit: BoxFit.cover),
+                // استخدام Image.network بدلاً من Image.asset لعرض صور من API
+                child: Image.network(
+                  product.image,
+                  fit: BoxFit.contain,
+                  // عرض مؤشر تحميل أثناء تحميل الصورة
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  // عرض أيقونة خطأ في حالة فشل تحميل الصورة
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             Positioned(
@@ -70,6 +95,8 @@ class ProductCard extends StatelessWidget {
                       child: Text(
                         product.title,
                         style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Spacer(),
@@ -77,9 +104,15 @@ class ProductCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: kDefaultPadding,
                       ),
-                      child: Text(
-                        product.subTitle,
-                        style: Theme.of(context).textTheme.bodySmall,
+                      child: Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            product.rating.toStringAsFixed(1),
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
                       ),
                     ),
                     Spacer(),
@@ -92,10 +125,11 @@ class ProductCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: Colors.red,
-                          // color: kSecondaryColor,
                           borderRadius: BorderRadius.circular(22),
                         ),
-                        child: Text("السعر: ${product.price}\$"),
+                        child: Text(
+                          "السعر: ${product.price.toStringAsFixed(2)}\$",
+                        ),
                       ),
                     ),
                   ],
