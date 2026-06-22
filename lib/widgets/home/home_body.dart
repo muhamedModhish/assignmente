@@ -1,9 +1,9 @@
 import 'package:electronic_stor/constansts.dart';
-import 'package:electronic_stor/product_provider.dart';
+import 'package:electronic_stor/models/product.dart';
 import 'package:electronic_stor/screens/details.screen.dart';
 import 'package:electronic_stor/widgets/product_cart.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
@@ -28,11 +28,12 @@ class HomeBody extends StatelessWidget {
                     ),
                   ),
                 ),
-                // استخدام Consumer لعرض المنتجات من API
-                Consumer<ProductProvider>(
-                  builder: (context, productProvider, child) {
-                    // عرض Loading Indicator أثناء تحميل البيانات
-                    if (productProvider.isLoading) {
+                // استخدام StreamBuilder لعرض المنتجات من Firestore
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('products').snapshots(),
+                  builder: (context, snapshot) {
+                    // عرض Loading Indicator أثناء تحميل البيانات من Firestore
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,8 +54,8 @@ class HomeBody extends StatelessWidget {
                       );
                     }
 
-                    // عرض رسالة خطأ مع زر إعادة المحاولة
-                    if (productProvider.errorMessage.isNotEmpty) {
+                    // عرض رسالة خطأ
+                    if (snapshot.hasError) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -72,21 +73,13 @@ class HomeBody extends StatelessWidget {
                                 fontSize: 16,
                               ),
                             ),
-                            SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                productProvider.loadProducts();
-                              },
-                              icon: Icon(Icons.refresh),
-                              label: Text('إعادة المحاولة'),
-                            ),
                           ],
                         ),
                       );
                     }
 
-                    // عرض المنتجات القادمة من API
-                    if (productProvider.products.isEmpty) {
+                    // عرض المنتجات القادمة من Firestore
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return Center(
                         child: Text(
                           'لا توجد منتجات',
@@ -98,10 +91,13 @@ class HomeBody extends StatelessWidget {
                       );
                     }
 
+                    final docs = snapshot.data!.docs;
+                    final products = docs.map((doc) => Product.fromDoc(doc)).toList();
+
                     return ListView.builder(
-                      itemCount: productProvider.products.length,
+                      itemCount: products.length,
                       itemBuilder: (context, index) {
-                        final product = productProvider.products[index];
+                        final product = products[index];
                         return ProductCard(
                           itemIndex: index,
                           product: product,

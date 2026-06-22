@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
   final int id;
   final double price;
@@ -36,5 +38,51 @@ class Product {
       category: json['category'] ?? '',
       rating: parsedRating,
     );
+  }
+
+  // تحويل وثيقة Firestore إلى كائن Product
+  factory Product.fromDoc(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    
+    // معالجة الـ id بشكل آمن ليتناسب مع السلاسل النصية أو الأرقام
+    dynamic rawId = data['id'];
+    int parsedId = 0;
+    if (rawId is int) {
+      parsedId = rawId;
+    } else if (rawId is String) {
+      parsedId = int.tryParse(rawId) ?? 0;
+    } else {
+      parsedId = int.tryParse(doc.id) ?? 0;
+    }
+
+    double parsedRating = 0.0;
+    if (data['rating'] != null) {
+      if (data['rating'] is num) {
+        parsedRating = (data['rating'] as num).toDouble();
+      }
+    }
+
+    return Product(
+      id: parsedId,
+      price: (data['price'] ?? 0).toDouble(),
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      image: data['image'] ?? data['thumbnail'] ?? '',
+      category: data['category'] ?? '',
+      rating: parsedRating,
+    );
+  }
+
+  // تحويل كائن Product إلى خريطة Map لحفظه في Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'price': price,
+      'title': title,
+      'description': description,
+      'image': image,
+      'category': category,
+      'rating': rating,
+    };
   }
 }

@@ -3,6 +3,7 @@ import 'package:electronic_stor/cart_screen.dart';
 import 'package:electronic_stor/constansts.dart';
 import 'package:electronic_stor/favorites_screen.dart' show FavoritesScreen;
 import 'package:electronic_stor/widgets/home/home_body.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,35 @@ class HomeScreen extends StatelessWidget {
       title: Text("مرحبا بكم بمتجر الكترونيات"),
       centerTitle: false,
       actions: [
+        IconButton(
+          icon: Icon(Icons.logout),
+          tooltip: 'تسجيل الخروج',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text('تسجيل الخروج'),
+                content: Text('هل أنت متأكد من رغبتك في تسجيل الخروج؟'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: Text('إلغاء'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      FirebaseAuth.instance.signOut();
+                    },
+                    child: Text(
+                      'تسجيل خروج',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
         IconButton(
           icon: Icon(Icons.favorite),
           onPressed: () {

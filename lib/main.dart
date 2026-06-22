@@ -1,13 +1,20 @@
 import 'package:electronic_stor/constansts.dart';
 import 'package:electronic_stor/product_provider.dart';
-import 'package:electronic_stor/screens/home_screen.dart';
+import 'package:electronic_stor/screens/auth_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:electronic_stor/firebase_options.dart';
 import 'cart_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   runApp(
     MultiProvider(
       providers: [
@@ -16,7 +23,7 @@ void main() {
           create: (_) => ProductProvider()..loadProducts(),
         ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -37,14 +44,14 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalCupertinoLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [Locale("ar", "AE")],
-      locale: Locale("ar", "AE"),
-      home: HomeScreen(),
+      supportedLocales: const [Locale("ar", "AE")],
+      locale: const Locale("ar", "AE"),
+      home: const AuthWrapper(),
     );
   }
 }
